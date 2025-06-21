@@ -22,6 +22,17 @@ def create_author(request):
     return render(request, 'authors/create_author.html', {'form': form})
 
 @login_required
+def edit_author(request, author_id):
+    author = get_object_or_404(Author, id=author_id)
+    form = AuthorForm(request.POST or None, instance=author)
+
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect('all_authors')
+
+    return render(request, 'authors/edit_author.html', {'form': form, 'author': author})
+
+@login_required
 def delete_author(request, author_id):
     author = get_object_or_404(Author, id=author_id)
     if not Book.objects.filter(authors=author).exists():
