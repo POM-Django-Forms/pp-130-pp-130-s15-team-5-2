@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}User Borrowed Books{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">View Books Borrowed by a User</h2>
+
+<form method="get" class="mb-4">
+  <div class="input-group">
+    <select name="user_id" class="form-select" required>
+      <option value="" disabled selected>Select a user</option>
+      {% for user in users %}
+        <option value="{{ user.id }}" {% if selected_user and user.id == selected_user.id %}selected{% endif %}>
+          {{ user.email }} ({{ user.first_name }} {{ user.last_name }})
+        </option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">View Books</button>
+  </div>
+</form>
+
+{% if selected_user %}
+  <h5>Books borrowed by: {{ selected_user.email }}</h5>
+  {% if orders %}
+    <table class="table table-striped mt-3">
+      <thead>
+        <tr>
+          <th>Book</th>
+          <th>Authors</th>
+          <th>Borrowed At</th>
+          <th>Due Date</th>
+          <th>Returned At</th>
+          <th>Available</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td>{{ order.book.name }}</td>
+          <td>
+            {% for author in order.book.authors.all %}
+              {{ author.name }} {{ author.surname }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </td>
+          <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+          <td>{{ order.plated_end_at|date:"Y-m-d" }}</td>
+          <td>
+            {% if order.end_at %}
+              {{ order.end_at|date:"Y-m-d H:i" }}
+            {% else %}
+              <span class="text-warning">Not returned</span>
+            {% endif %}
+          </td>
+          <td>{{ order.book.count }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="text-muted mt-3">This user has no borrowed books.</p>
+  {% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}All Books{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>All Books</h2>
+    {% if user.is_authenticated and user.role == 1 %}
+      <a href="{% url 'create_book' %}" class="btn btn-success">➕ Add Book</a>
+    {% endif %}
+  </div>
+
+  <ul class="list-group">
+    {% for book in books %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <a href="{% url 'book_detail' book.id %}" class="fw-bold text-decoration-none text-dark">
+            {{ book.name }}
+          </a><br>
+          <small class="text-muted">
+            Authors:
+            {% if book.authors.exists %}
+              {% for author in book.authors.all %}
+                {{ author.name }} {{ author.surname }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            {% else %}
+              <em>No authors listed</em>
+            {% endif %}
+          </small>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-primary rounded-pill" title="Available copies">
+            Available: {{ book.count }}
+          </span>
+          {% if user.is_authenticated and user.role == 1 %}
+            <a href="{% url 'edit_book' book.id %}" class="btn btn-sm btn-outline-primary" title="Edit Book">✏️</a>
+            <form action="{% url 'delete_book' book.id %}" method="post" class="mb-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger"
+                onclick="return confirm('Are you sure you want to delete this book?');" title="Delete Book">🗑</button>
+            </form>
+          {% endif %}
+        </div>
+      </li>
+    {% empty %}
+      <li class="list-group-item text-center text-muted">No books available.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

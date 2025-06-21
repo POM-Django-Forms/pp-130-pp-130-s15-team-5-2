@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Order a Book{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Available Books for Order</h4>
+    </div>
+
+    <div class="card-body">
+      {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+      {% endif %}
+
+      {% if books %}
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Book</th>
+                <th>Authors</th>
+                <th>Description</th>
+                <th>Available</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for book in books %}
+                <tr>
+                  <td class="fw-semibold">
+                    <a href="{% url 'book_detail' book.id %}" class="text-decoration-none text-dark">
+                      {{ book.name }}
+                    </a>
+                  </td>
+                  <td class="text-muted">
+                    {% if book.authors.exists %}
+                      {% for author in book.authors.all %}
+                        {{ author.name }} {{ author.surname }}{% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                    {% else %}
+                      <em>No author</em>
+                    {% endif %}
+                  </td>
+                  <td>{{ book.description|truncatechars:75 }}</td>
+                  <td><span class="badge bg-success">{{ book.count }}</span></td>
+                  <td>
+                    <form method="post" class="d-inline">
+                      {% csrf_token %}
+                      <input type="hidden" name="book_id" value="{{ book.id }}">
+                      <button type="submit" class="btn btn-sm btn-outline-primary">Order</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="alert alert-warning text-center">
+          No books available for ordering.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

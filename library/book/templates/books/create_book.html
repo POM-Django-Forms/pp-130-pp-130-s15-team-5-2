@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Create/Edit a Book{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="mb-4 text-center">
+            {% if edit_mode %}Edit Book{% else %}Create New Book{% endif %}
+          </h3>
+        </div>
+        <div class="card-body">
+          <form method="POST">
+            {% csrf_token %}
+
+            {% for field in form %}
+              <div class="row mb-3 align-items-center">
+                <label for="{{ field.id_for_label }}" class="col-sm-3 col-form-label fw-semibold">
+                  {{ field.label }}
+                </label>
+                <div class="col-sm-9">
+                  {{ field }}
+                  {% if field.help_text %}
+                    <div class="form-text text-muted">{{ field.help_text }}</div>
+                  {% endif %}
+                  {% if field.errors %}
+                    <div class="text-danger small">
+                      {{ field.errors }}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <button type="submit" class="btn btn-success">Save</button>
+              <a href="{% url 'all_books' %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

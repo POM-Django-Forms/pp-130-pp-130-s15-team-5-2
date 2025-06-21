@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Filter Books{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Search for books</h2>
+    <form method="get" class="d-flex" role="search">
+      <input type="text" name="q" value="{{ query }}" class="form-control me-2" placeholder="Search by title or author">
+      <button type="submit" class="btn btn-outline-primary">Search</button>
+    </form>
+  </div>
+
+  {% if books %}
+    <ul class="list-group shadow-sm">
+      {% for book in books %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <a href="{% url 'book_detail' book.id %}" class="fw-bold">{{ book.name }}</a><br>
+            <small class="text-muted">
+              Authors:
+              {% if book.authors.exists %}
+                {% for author in book.authors.all %}
+                  {{ author.name }} {{ author.surname }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+              {% else %}
+                <em>No authors listed</em>
+              {% endif %}
+            </small>
+          </div>
+          <span class="badge bg-primary rounded-pill" title="Available copies">Available: {{ book.count }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="alert alert-warning text-center mt-4" role="alert">
+      No books found for your search.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
