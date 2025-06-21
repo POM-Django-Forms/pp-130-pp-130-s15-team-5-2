@@ -51,6 +51,7 @@
                       <input type="hidden" name="book_id" value="{{ book.id }}">
                       <button type="submit" class="btn btn-sm btn-outline-primary">Order</button>
                     </form>
+                    <a href="{% url 'custom_order' book.id %}" class="btn btn-sm btn-outline-secondary">Custom Order</a>
                   </td>
                 </tr>
               {% endfor %}

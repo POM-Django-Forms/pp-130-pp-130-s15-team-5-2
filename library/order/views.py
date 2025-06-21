@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+
 from .models import Order
 from book.models import Book
+from .forms import CustomOrderForm
 from django.utils import timezone
 
 
@@ -38,6 +40,25 @@ def create_order(request):
     books = Book.objects.all()
     return render(request, 'orders/create_order.html', {'books': books, 'error': error})
 
+@login_required
+def custom_order(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    available = book.count > 0
+
+    if request.method == 'POST':
+        form = CustomOrderForm(request.POST)
+        if form.is_valid() and available:
+            plated_end_at = form.cleaned_data['plated_end_at']
+            order = Order.create(user=request.user, book=book, plated_end_at=plated_end_at)
+            return redirect('user_orders')
+    else:
+        form = CustomOrderForm()
+
+    return render(request, 'orders/custom_order.html', {
+        'form': form,
+        'book': book,
+        'available': available,
+    })
 
 @login_required
 def close_order(request, order_id):
