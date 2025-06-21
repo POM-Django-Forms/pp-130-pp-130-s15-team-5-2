@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow border-0">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">My Orders</h4>
+      <a href="{% url 'create_order' %}" class="btn btn-light btn-sm">+ Create New Order</a>
+    </div>
+
+    <div class="card-body">
+      {% if orders %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">Book</th>
+                <th scope="col">Borrowed At</th>
+                <th scope="col">Due Date</th>
+                <th scope="col">Returned At</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>
+                <td>
+                  <strong>{{ order.book.name }}</strong><br>
+                  <small class="text-muted">
+                    by
+                    {% for author in order.book.authors.all %}
+                      {{ author.name }} {{ author.surname }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                  </small>
+                </td>
+                <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+                <td>{{ order.plated_end_at|date:"Y-m-d" }}</td>
+                <td>
+                  {% if order.end_at %}
+                    {{ order.end_at|date:"Y-m-d H:i" }}
+                  {% else %}
+                    <span class="text-warning">Not returned</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if order.end_at %}
+                    <span class="badge bg-success">Closed</span>
+                  {% else %}
+                    <span class="badge bg-info text-dark">Active</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="alert alert-info text-center">
+          You don’t have any orders yet. Click <strong>+ Create New Order</strong> to get started!
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

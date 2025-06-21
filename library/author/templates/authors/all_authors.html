@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}All Authors{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg border-0 rounded-3">
+    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">All Authors</h4>
+      <a href="{% url 'create_author' %}" class="btn btn-light btn-sm">➕ Create New Author</a>
+    </div>
+
+    <div class="card-body">
+      {% if authors %}
+        <div class="table-responsive">
+          <table class="table table-striped align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Patronymic</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for author in authors %}
+                <tr>
+                  <td>{{ author.name }}</td>
+                  <td>{{ author.surname }}</td>
+                  <td>{{ author.patronymic|default:"—" }}</td>
+                  <td>
+                    <form action="{% url 'delete_author' author.id %}" method="post" class="mb-0 d-inline">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-outline-danger"
+                              onclick="return confirm('Are you sure you want to delete this author?');">
+                        🗑
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="alert alert-warning text-center mb-0">No authors found.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

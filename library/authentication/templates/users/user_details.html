@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}User Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">User Details</h4>
+    </div>
+    <div class="card-body">
+      <ul class="list-group list-group-flush mb-3">
+        <li class="list-group-item"><strong>First Name:</strong> {{ user_obj.first_name|default:"—" }}</li>
+        <li class="list-group-item"><strong>Middle Name:</strong> {{ user_obj.middle_name|default:"—" }}</li>
+        <li class="list-group-item"><strong>Last Name:</strong> {{ user_obj.last_name|default:"—" }}</li>
+        <li class="list-group-item"><strong>Email:</strong> {{ user_obj.email }}</li>
+        <li class="list-group-item">
+          <strong>Role:</strong>
+          {% if user_obj.role == 1 %}
+            <span class="badge bg-success">Librarian</span>
+          {% else %}
+            <span class="badge bg-secondary">Visitor</span>
+          {% endif %}
+        </li>
+        <li class="list-group-item"><strong>Registered on:</strong> {{ user_obj.created_at|date:"d M Y" }}</li>
+      </ul>
+      <a href="{% url 'all_users' %}" class="btn btn-outline-secondary">← Back to Users</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
