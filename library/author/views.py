@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Author
 from book.models import Book
+from .forms import AuthorForm
 
 
 @login_required
@@ -12,15 +13,13 @@ def all_authors(request):
 
 @login_required
 def create_author(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        surname = request.POST.get('surname')
-        patronymic = request.POST.get('patronymic')
-        if name and surname:
-            Author.objects.create(name=name, surname=surname, patronymic=patronymic)
-            return redirect('all_authors')
-    return render(request, 'authors/create_author.html')
+    form = AuthorForm(request.POST or None)
 
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect('all_authors')
+    
+    return render(request, 'authors/create_author.html', {'form': form})
 
 @login_required
 def delete_author(request, author_id):

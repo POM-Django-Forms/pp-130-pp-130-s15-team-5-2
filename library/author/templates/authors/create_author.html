@@ -12,26 +12,16 @@
         <div class="card-body">
           <form method="post" novalidate>
             {% csrf_token %}
-
-            {% if error %}
-              <div class="alert alert-danger">{{ error }}</div>
-            {% endif %}
-
-            <div class="mb-3">
-              <label for="name" class="form-label">First Name</label>
-              <input type="text" class="form-control" name="name" id="name" required>
-            </div>
-
-            <div class="mb-3">
-              <label for="surname" class="form-label">Surname</label>
-              <input type="text" class="form-control" name="surname" id="surname" required>
-            </div>
-
-            <div class="mb-3">
-              <label for="patronymic" class="form-label">Patronymic</label>
-              <input type="text" class="form-control" name="patronymic" id="patronymic">
-            </div>
-
+            {{ form.non_field_errors }}
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                  <div class="text-danger small">{{ field.errors|striptags }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
             <div class="d-flex justify-content-between">
               <button type="submit" class="btn btn-success">Create Author</button>
               <a href="{% url 'all_authors' %}" class="btn btn-outline-secondary">Cancel</a>
